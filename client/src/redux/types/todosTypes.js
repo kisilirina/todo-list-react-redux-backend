@@ -1,0 +1,7 @@
+export const GET_TODOS = "GET_TODOS"
+export const ADD_TODO = "ADD_TODO"
+export const ADD_TODO_SAGA = "ADD_TODO_SAGA"
+export const CHANGE_STATUS = "CHANGE_STATUS"
+export const DELETE_TODO = "DELETE_TODO"
+export const CHANGE_TASK = "CHANGE_TASK"
+export const CHANGE_STATUS_EDIT = "CHANGE_STATUS_EDIT"
