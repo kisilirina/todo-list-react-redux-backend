@@ -8,8 +8,9 @@ const Item = ({ item, index }) => {
   const dispatch = useDispatch()
 
   const doneHandler = (id, done) => {
-    fetch('http://localhost:3000/api/v1/todos', {
+    fetch(`${process.env.REACT_APP_ADDRESS_TO_FETCH}/api/v1/todos`, {
       method: "PATCH",
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -19,8 +20,9 @@ const Item = ({ item, index }) => {
   }
 
   const deleteHandler = (id) => {
-    fetch('http://localhost:3000/api/v1/todos', {
+    fetch(`${process.env.REACT_APP_ADDRESS_TO_FETCH}/api/v1/todos`, {
       method: "DELETE",
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -30,8 +32,9 @@ const Item = ({ item, index }) => {
   }
 
   const editHandler = (id, edit) => {
-    fetch('http://localhost:3000/api/v1/todos', {
+    fetch(`${process.env.REACT_APP_ADDRESS_TO_FETCH}/api/v1/todos`, {
       method: "PATCH",
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -41,17 +44,20 @@ const Item = ({ item, index }) => {
   }
 
   const editState = (e, id, value, edit) => {
-    console.log('ya zashel');
+
     e.preventDefault();
-    fetch('http://localhost:3000/api/v1/todos', {
-      method: "PATCH",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id, task: value, edit: !edit }),
-    })
-      .then(response => response.json())
-      .then(editTask => dispatch(changeTask(editTask)))
+    if (value.trim()) {
+      fetch(`${process.env.REACT_APP_ADDRESS_TO_FETCH}/api/v1/todos`, {
+        method: "PATCH",
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id, task: value, edit: !edit }),
+      })
+        .then(response => response.json())
+        .then(editTask => dispatch(changeTask(editTask)))
+    }
   }
 
 
@@ -63,15 +69,15 @@ const Item = ({ item, index }) => {
         item.edit
           ? <div className="d-flex justify-content-start my-2">
             <form className="d-flex mx-5" onSubmit={(e) => editState(e, item._id, valueinInput, item.edit)}>
-              <input className="form-control mr-1" value={valueinInput} onChange={(e) => setValueinInput(e.target.value)} style={{width: '70vw'}}/>
-              <button type="submit" className="btn btn-primary mx-5" style={{width: '10vw'}}>Save changes</button >
+              <input className="form-control mr-1" value={valueinInput} onChange={(e) => setValueinInput(e.target.value)} style={{ width: '70vw' }} />
+              <button type="submit" className="btn btn-primary mx-5" style={{ width: '10vw' }}>Save changes</button >
             </form>
           </div>
           : <div className="d-flex justify-content-start my-2">
             <li id={item._id} className="list-group-item mx-5"><span className={item.done ? 'done' : ''}>{index + 1}. {item.task}</span></li>
-            <button onClick={() => doneHandler(item._id, item.done)} className={`btn btn-${item.done ? 'secondary' : 'success'} mx-1`} style={{width: '7vw'}}>{item.done ? 'Undone' : 'Done'}</button>
-            <button onClick={() => deleteHandler(item._id)} className="btn-danger btn mx-1" style={{width: '7vw'}}>Delete</button>
-            <button onClick={() => editHandler(item._id, item.edit)} className="btn-warning btn mx-1" style={{width: '7vw'}}>Edit</button>
+            <button onClick={() => doneHandler(item._id, item.done)} className={`btn btn-${item.done ? 'secondary' : 'success'} mx-1`} style={{ width: '7vw' }}>{item.done ? 'Undone' : 'Done'}</button>
+            <button onClick={() => deleteHandler(item._id)} className="btn-danger btn mx-1" style={{ width: '7vw' }}>Delete</button>
+            <button onClick={() => editHandler(item._id, item.edit)} className="btn-warning btn mx-1" style={{ width: '7vw' }}>Edit</button>
           </div>
       }
     </>

@@ -14,11 +14,8 @@ import rootSaga from './redux/saga/rootSaga';
 
 
 const sagaMiddleware = createSagaMiddleware()
-const store = createStore( rootReducer, initState(), composeWithDevTools(applyMiddleware(thunk, sagaMiddleware)));
+const store = createStore(rootReducer, initState, composeWithDevTools(applyMiddleware(thunk, sagaMiddleware)));
 sagaMiddleware.run(rootSaga)
-store.subscribe(() => {
-  window.localStorage.setItem('myApp', JSON.stringify(store.getState()));
-})
 
 ReactDOM.render(
   <React.StrictMode>

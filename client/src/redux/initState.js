@@ -1,10 +1,9 @@
-const initState = () => {
-  const state = {
-    todos: []
+  const initState = {
+    todos: [],
+    user: {
+      nickname: '',
+      isAuth: false
+    },
   }
-
-  const fromLS = JSON.parse(window.localStorage.getItem('myApp'))
-  return fromLS ? fromLS : state;
-}
 
 export default initState;

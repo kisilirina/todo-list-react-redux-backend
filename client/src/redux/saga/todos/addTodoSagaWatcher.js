@@ -1,11 +1,12 @@
 import { takeEvery, call, put } from '@redux-saga/core/effects';
-import { addTodo } from '../actionCreators/todosAC';
-import { ADD_TODO_SAGA} from '../types/todosTypes';
+import { addTodo } from '../../actionCreators/todosAC';
+import { ADD_TODO_SAGA} from '../../types/todosTypes';
 
 
 const addTodoToServer = (inputTask) => {
-   return fetch('http://localhost:3000/api/v1/todos',{
+   return fetch(`${process.env.REACT_APP_ADDRESS_TO_FETCH}/api/v1/todos`,{
         method: "POST",
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },

@@ -15,7 +15,6 @@ const List = () => {
   }, [])
 
   const todos = useSelector(state => state.todos)
-  console.log('From List component ', todos);
 
   return (
     <>
@@ -26,7 +25,7 @@ const List = () => {
             {
               todos.length ?
                 todos.map((el, i) => <Item key={el._id} index={i} item={el} />)
-                : <p>Пусто</p>
+                : <p className="text-center">Здесь пока ничего нет...</p>
             }
           </ul>
       }

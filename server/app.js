@@ -1,66 +1,63 @@
 require('dotenv').config();
 const express = require('express')
+const morgan = require('morgan')
+const sessions = require('express-session');
 const cors = require('cors')
-const Todo = require('./db/todo')
-const {connect} = require('mongoose')
+const Todo = require('./src/db/todo.model')
+const { connect } = require('mongoose')
+const MongoStore = require('connect-mongo');
 const app = express()
 
+app.set('cookieName', 'sid');
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+const todoRouter = require('./src/routes/todoRouter.js');
+const userRouter = require('./src/routes/userRouter.js');
 
-app.get('/api/v1/todos', async (req, res) => {
-  setTimeout(async () => {
+app.use(cors({
+  origin: `${process.env.OUR_URL}`,
+  credentials: true,
+}));
+// app.use(cors())
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'))
+app.use(sessions({
+  name: app.get('cookieName'),
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.DB_URL,
+  }),
+  cookie: {
+    httpOnly: true,
+    maxAge: 86400 * 1e3,
+  },
+}));
 
-    const todos = await Todo.find();
-  
-    return res.json(todos);
-  }, 3e3)
-})
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/todos', todoRouter);
 
-app.post('/api/v1/todos', async (req, res) => {
-  const newTodo = await Todo.create({ task: req.body.task });
-  return res.json(newTodo);
-})
-
-app.patch('/api/v1/todos', async (req, res) => {
-  try {
-    const { id, task, done, edit } = req.body
-    if (task) {
-      await Todo.findByIdAndUpdate(id, { task, edit });
-      return res.status(200).json(await Todo.findById(id));
-    }
-    if (done) await Todo.findByIdAndUpdate(id, { done });
-    if (edit) await Todo.findByIdAndUpdate(id, { edit });
-
-    return res.sendStatus(200);
-  } catch (error) {
-    console.log("error patch", error.message);
-    res.sendStatus(400);
-  }
-
-})
-
-app.delete('/api/v1/todos', async (req, res) => {
-  try {
-    await Todo.findByIdAndDelete(req.body.id);
-    return res.sendStatus(200);
-  } catch {
-    console.log("error delete", error.message);
-    res.sendStatus(400);
-  }
-})
+const PORT = process.env.PORT ?? 3000;
+// const root = require('path').join(__dirname, '../', 'client', 'build');
+// app.use(express.static(root));
+// app.get('*', (req, res) => {
+//   res.sendFile('index.html', { root });
+// });
 
 app.listen(
-  process.env.PORT ?? 3000,
+  PORT,
   () => {
-    console.log("Start!");
+    console.log(`Server started on port ${PORT}.`);
     connect(process.env.DB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
+      useNewUrlParser: true, // говорим mongoose, что строка подключения будет в новом формате (новый формат должен обязательно содеражт порт)
+      useFindAndModify: false, // заставляем методы findOneAndUpdate() и findOneAndRemove() использовать нативный (т.е предоставленный самой mongodb) метод findOneAndUpdate() вместо findAndModify()
+      useCreateIndex: true, // Заставляем mongoose работать с функцией createIndex() драйвера mongodb вместо ensureIndex(). Так как последний помечен драйвером mongodb, как устаревший
+      useUnifiedTopology: true, // заставляем mongoose использование новый механизм управления подключением драйвера mongodb.
+      poolSize: 10, // максимальное количество сокетов, которые драйвер MongoDB будет держать открытыми для этого соединения
+      bufferMaxEntries: 0, // говорим mongoose перестать выполнять любые операции с базой данных, после того как произодет отключение от последней.
+      // В противном случае mongoose пытается дождаться восстановления соездинения, для завершения  операций
     }, () => console.log('Connection to db!'));
   },
 )
+

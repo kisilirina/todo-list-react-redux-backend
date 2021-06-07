@@ -1,7 +1,4 @@
-const { Schema, model, pluralize } = require('mongoose');
-
-pluralize(null);
-
+const { Schema, model } = require('mongoose');
 
 const todoSchema = new Schema({
   task: {

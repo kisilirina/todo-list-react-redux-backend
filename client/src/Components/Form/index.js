@@ -8,7 +8,8 @@ const Form = () => {
   
   const handlerSubmit = (e, inputTask) => {
     e.preventDefault();
-    dispatch(addTodoSaga(inputTask))
+    dispatch(addTodoSaga(inputTask));
+    setInput('');
   }
 
   return (
