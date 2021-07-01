@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import {applyMiddleware, createStore} from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 import rootReducer from './redux/reducers/rootReducer';
 import initState from './redux/initState';
 import { Provider } from 'react-redux'
@@ -20,7 +20,7 @@ sagaMiddleware.run(rootSaga)
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App /> 
+      <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

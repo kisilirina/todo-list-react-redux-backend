@@ -6,7 +6,6 @@ export const getTodosFromServer = (ac) => async (dispatch) => {
   dispatch(getTodos(todosFromServer))
 }
 
-
 export const getTodos = (todos) => {
   return {
     type: GET_TODOS,

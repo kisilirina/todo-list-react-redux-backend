@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"
 import { getTodosFromServer } from "../../redux/actionCreators/todosAC"
-import Item from "../Item"
+import Item from "../Item/Item"
 import { useState, useEffect } from 'react'
 import Loader from '../Loader/Loader'
 
